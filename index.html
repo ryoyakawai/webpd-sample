@@ -22,7 +22,8 @@
       transition:1.0s;
     }
     .contr {
-      text-align:right;
+      position:absolute;
+      top:10px; right:10px;
     }
     .text {
       font-weight: bold;
@@ -35,10 +36,12 @@
       background-color:#2979FF;
       border-style: none;
       border-radius: 3px;
+      cursor:pointer;
     }
     </style>
   </head>
   <body>
+    <span>Click <b>Start</b> Button >></span>
     <div class="contr">
       <span class="text">BPM:</span> <input id="tempo" class="tempo" value="120">
       <button id="start" class="button">Start</button>
