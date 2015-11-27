@@ -1,0 +1,36 @@
+#N canvas 699 55 531 500 10;
+#X obj 100 16 tgl 15 1 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#X obj 42 189 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X obj 12 14 receive play;
+#X obj 99 187 send metro;
+#X obj 101 224 float;
+#X obj 161 224 + 1;
+#X obj 81 265 osc~ 440;
+#X obj 156 265 % 2;
+#X obj 81 320 *~;
+#X floatatom 156 293 5 0 0 0 - - -;
+#X obj 60 400 dac~;
+#X obj 164 40 receive metroTime;
+#X obj 42 136 metro;
+#X msg 102 51 1000;
+#X obj 31 322 *~;
+#X connect 0 0 13 0;
+#X connect 0 0 12 0;
+#X connect 2 0 12 0;
+#X connect 4 0 5 0;
+#X connect 4 0 7 0;
+#X connect 5 0 4 1;
+#X connect 6 0 8 0;
+#X connect 7 0 9 0;
+#X connect 8 0 10 0;
+#X connect 8 0 10 1;
+#X connect 9 0 8 1;
+#X connect 11 0 12 1;
+#X connect 12 0 1 0;
+#X connect 12 0 3 0;
+#X connect 12 0 4 0;
+#X connect 13 0 12 1;
+#X connect 14 0 10 0;
+#X connect 14 0 10 1;

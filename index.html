@@ -1,0 +1,105 @@
+<!doctype HTML>
+<html>
+  <head>
+    <script src="./js/webpd-latest.min.js"></script>
+    <style>
+    body {
+      font-family:Arial;
+    }
+    .tempo {
+      font-size:20px;
+      width:50px;
+      text-align:right;
+      border-radius:3px;
+      border:1px solid #ddd;
+      padding-right:4px;
+    }
+    .body-all {
+      position:absolute;
+      top:42px; left:0px;
+      width:100%; height:100%;
+      background-color:rgba(223, 30, 99, 0);
+      transition:1.0s;
+    }
+    .contr {
+      text-align:right;
+    }
+    .text {
+      font-weight: bold;
+    }
+    .button {
+      font-size: 16px;
+      font-weight: bold;
+      padding: 5px 10px;
+      color: #fff;
+      background-color:#2979FF;
+      border-style: none;
+      border-radius: 3px;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="contr">
+      <span class="text">BPM:</span> <input id="tempo" class="tempo" value="120">
+      <button id="start" class="button">Start</button>
+    </div>
+    <div class="body-all"></div>
+    <script>
+    var pf="./pdpatch/metronome_test.pd";
+    var patch, loadingPatch, isPlaying=0;
+    loadingPatch=new Promise(
+        function(resolve, reject) {
+            var xhr=new XMLHttpRequest();
+            xhr.open('GET', pf, true);
+            xhr.onreadystatechange = function(){
+                if (xhr.readyState === 4 && xhr.status === 200){
+                    resolve({"status":true, "result":xhr.responseText});
+                } else if(xhr.status >= 400) {
+                    reject({"status":false, "result":xhr.responseText});
+                }
+            };
+            xhr.send(null);
+        }
+   );  
+
+   loadingPatch.then(function(value) {
+       if(value.status===true) {
+           patch = Pd.loadPatch(value.result);
+           console.log(Pd, patch)
+           Pd.start()
+       } else {
+           console.info("[ERROR]", value.result);
+       }
+
+
+        // Send message to Pd
+        document.getElementById("start").addEventListener("mousedown", function(event){
+           isPlaying=(isPlaying+1)%2;
+           var tempo=parseFloat((1000*60/document.getElementById("tempo").value));
+           console.info("[info] ", isPlaying, tempo);
+
+           var button="Start";
+           if(isPlaying==1) {
+               button="Stop";
+           }
+           document.getElementById("start").innerHTML=button;
+
+           Pd.send("metroTime", [tempo]);
+           Pd.send("play", [isPlaying]);
+        });
+
+        // Receive event from Pd
+        var opacity=0, counter=0;
+        var colors=["156, 39, 176", "103, 58, 183", "38, 166, 154", "67, 160, 71", "223, 30, 99", 
+                    "124, 179, 66", "205, 220, 57", "245, 127, 23", "141, 110, 99"];
+        Pd.receive('metro', function(){
+            opacity=(opacity+1)%2;
+            counter=(counter+1)%(colors.length-1);
+            console.log(colors[counter]);
+            document.querySelector(".body-all").style.setProperty("background-color", "rgba("+colors[counter]+","+opacity+")");
+        });
+   });
+    </script>
+  </body>
+</html>
+
